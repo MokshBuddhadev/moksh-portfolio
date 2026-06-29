@@ -1,7 +1,7 @@
 # Moksh Buddhadev — Portfolio
 
 ## 🚀 Live Demo
-**[mokshbuddhadev.vercel.app](https://mokshbuddhadev.vercel.app)** 
+**[mokshbuddhadev.vercel.app](https://moksh-portfolio-nine.vercel.app/)** 
 
 ## 🛠️ Technology Stack
 - **Framework:** Next.js 14 (App Router)
