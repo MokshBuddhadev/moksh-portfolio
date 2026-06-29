@@ -4,163 +4,90 @@ import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
-const LINE_ONE = [
-  { text: "hey,", accent: false },
-  { text: "I'm", accent: false },
-  { text: "Moksh", accent: false },
-  { text: "—", accent: false },
-];
-
-const LINE_TWO = [
-  { text: "AI/ML", accent: false },
-  { text: "engineer.", accent: false },
-];
-
-const LINE_THREE = [
-  { text: "I", accent: false },
-  { text: "build", accent: false },
-  { text: "systems", accent: false },
-  { text: "that", accent: false },
-  { text: "think.", accent: true },
-];
-
-interface GreetingOverlayProps {
-  onIntroComplete?: () => void;
-}
-
-export function GreetingOverlay({ onIntroComplete }: GreetingOverlayProps) {
-  const overlayRef = useRef<HTMLDivElement>(null);
+export function GreetingOverlay() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const chevronRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
   useEffect(() => {
-    const words = overlayRef.current?.querySelectorAll(".greeting-word");
+    const container = containerRef.current;
+    const title = titleRef.current;
     const subtitle = subtitleRef.current;
     const cta = ctaRef.current;
-    const chevron = chevronRef.current;
-    if (!words || !subtitle || !cta) return;
+
+    if (!container || !title || !subtitle || !cta) return;
 
     if (reduced) {
-      gsap.set(words, { opacity: 1, y: 0 });
-      gsap.set([subtitle, cta, chevron], { opacity: 1 });
-      document.body.style.overflow = "";
-      onIntroComplete?.();
+      gsap.set([title, subtitle, cta], { opacity: 1, y: 0 });
       window.dispatchEvent(new Event("hero-navbar-show"));
       return;
     }
 
-    gsap.set(words, { opacity: 0, y: 24 });
-    gsap.set([subtitle, cta], { opacity: 0, y: 14 });
-    if (chevron) gsap.set(chevron, { opacity: 0 });
+    // Masking setup
+    const titleLines = title.querySelectorAll(".overflow-hidden > span");
+    
+    gsap.set(titleLines, { y: "120%" });
+    gsap.set([subtitle, cta], { opacity: 0, y: 20 });
 
     const playAnimation = () => {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          onIntroComplete?.();
-        },
+      const tl = gsap.timeline();
+
+      tl.to(titleLines, {
+        y: "0%",
+        duration: 1,
+        stagger: 0.1,
+        ease: "power4.out",
       });
 
-      tl.to(words, {
-        opacity: 1,
-        y: 0,
-        stagger: 0.07,
-        duration: 0.6,
-        ease: "power3.out",
-      }, 0.3);
-
-      tl.to(subtitle, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.5);
-      tl.to(cta.children, {
-        opacity: 1,
-        y: 0,
-        stagger: 0.1,
-        duration: 0.5,
-        ease: "power2.out",
-      }, 1.7);
-
-      if (chevron) {
-        tl.to(chevron, { opacity: 1, duration: 0.6, ease: "power2.out" }, 2.4);
-      }
+      tl.to(subtitle, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.6");
+      tl.to(cta, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.6");
 
       tl.call(() => {
         window.dispatchEvent(new Event("hero-navbar-show"));
-      }, undefined, 2.0);
+      });
     };
 
-    // Wait for preloader-complete instead of canvas-ready
     window.addEventListener("preloader-complete", playAnimation, { once: true });
 
     return () => {
       window.removeEventListener("preloader-complete", playAnimation);
     };
-  }, [reduced, onIntroComplete]);
-
-  const renderLine = (words: typeof LINE_ONE, key: string) => (
-    <span key={key} className="block">
-      {words.map(({ text, accent }, i) => (
-        <span
-          key={`${text}-${i}`}
-          className={`greeting-word mr-[0.3em] inline-block ${
-            accent ? "gradient-text" : ""
-          }`}
-        >
-          {text}
-        </span>
-      ))}
-    </span>
-  );
+  }, [reduced]);
 
   return (
     <div
-      ref={overlayRef}
-      className="pointer-events-none absolute inset-0 z-10 flex items-end px-6 pb-20 md:px-10 md:pb-28 lg:px-16"
+      ref={containerRef}
+      className="absolute inset-0 z-10 flex flex-col justify-center px-6 md:px-12 lg:px-24"
     >
-      <div className="w-full max-w-xl lg:max-w-lg">
-        <h1 className="font-display text-[2rem] font-bold leading-[1.15] text-salt sm:text-4xl md:text-[2.5rem] lg:text-5xl">
-          {renderLine(LINE_ONE, "l1")}
-          {renderLine(LINE_TWO, "l2")}
-          {renderLine(LINE_THREE, "l3")}
+      <div className="w-full max-w-5xl">
+        <h1 ref={titleRef} className="font-display text-[15vw] font-black leading-[0.8] tracking-tighter text-text-primary md:text-[12vw]">
+          Moksh<br />Buddhadev.
         </h1>
+        
         <p
           ref={subtitleRef}
-          className="mt-3 font-mono text-xs text-fog opacity-0 sm:text-sm"
+          className="mt-8 max-w-2xl font-mono text-sm leading-relaxed text-text-secondary md:text-base"
         >
-          B.Tech CSE · MUJ 2027 · AI/ML · GenAI
+          Building intelligent systems and pushing the boundaries of what&apos;s possible with AI. B.Tech CSE at MUJ.
         </p>
-        <div ref={ctaRef} className="mt-5 flex flex-wrap gap-3 opacity-0">
+        
+        <div ref={ctaRef} className="mt-10 flex flex-wrap gap-4">
           <a
             href="#projects"
-            className="pointer-events-auto inline-block rounded-lg px-5 py-2.5 font-mono text-xs font-medium text-ink transition-all duration-300 hover:scale-[1.03] hover:shadow-lg sm:text-sm"
-            style={{
-              background: "linear-gradient(135deg, var(--accent), var(--cyan))",
-            }}
+            className="inline-block rounded-full bg-text-primary px-8 py-4 font-body text-sm font-semibold text-bg-primary transition-transform hover:scale-105"
           >
-            See my work ↓
+            Explore Work
           </a>
           <a
             href="/Moksh_Resume.pdf"
             download="Moksh_Buddhadev_Resume.pdf"
-            className="pointer-events-auto inline-block rounded-lg border border-ridge bg-terrain/80 px-5 py-2.5 font-mono text-xs text-salt backdrop-blur-sm transition-all duration-300 hover:border-accent hover:bg-accent/5 sm:text-sm"
+            className="inline-block rounded-full border border-border-light bg-transparent px-8 py-4 font-body text-sm font-medium text-text-primary transition-colors hover:bg-bg-secondary"
           >
-            Download resume ↓
+            Download Resume
           </a>
         </div>
-      </div>
-
-      <div
-        ref={chevronRef}
-        className="chevron-pulse absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0"
-        aria-hidden="true"
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M6 9l6 6 6-6"
-            stroke="var(--cyan)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
       </div>
     </div>
   );

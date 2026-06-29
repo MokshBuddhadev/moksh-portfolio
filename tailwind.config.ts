@@ -9,27 +9,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "var(--ink)",
-        "deep-water": "var(--deep-water)",
-        accent: "var(--accent)",
-        "accent-bright": "var(--accent-bright)",
-        cyan: "var(--cyan)",
-        gold: "var(--gold)",
-        fog: "var(--fog)",
-        salt: "var(--salt)",
-        terrain: "var(--terrain)",
-        ridge: "var(--ridge)",
+        "bg-primary": "var(--bg-primary)",
+        "bg-secondary": "var(--bg-secondary)",
+        "bg-tertiary": "var(--bg-tertiary)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "border-light": "var(--border-light)",
       },
       fontFamily: {
         display: ["var(--font-display)", "system-ui", "sans-serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
-      },
-      animation: {
-        shimmer: "shimmer 2s linear infinite",
-        "fade-in-up": "fade-in-up 0.6s ease-out forwards",
-        "gradient-shift": "gradient-shift 3s ease infinite",
-        "waveform-drift": "waveform-drift 8s linear infinite",
       },
     },
   },

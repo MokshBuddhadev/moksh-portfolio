@@ -1,24 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const CONTACTS = [
   {
-    label: "mokshbuddhadev@gmail.com",
+    label: "Email",
+    value: "mokshbuddhadev@gmail.com",
     href: "mailto:mokshbuddhadev@gmail.com",
-    icon: "✉",
   },
   {
-    label: "linkedin.com/in/mokshbuddhadev12",
+    label: "LinkedIn",
+    value: "linkedin.com/in/mokshbuddhadev12",
     href: "https://linkedin.com/in/mokshbuddhadev12",
-    icon: "in",
   },
   {
-    label: "github.com/MokshBuddhadev",
+    label: "GitHub",
+    value: "github.com/MokshBuddhadev",
     href: "https://github.com/MokshBuddhadev",
-    icon: "gh",
   },
 ];
 
@@ -32,119 +32,86 @@ export function Contact() {
     if (!rows) return;
 
     if (reduced) {
-      gsap.set(rows.children, { opacity: 1, x: 0 });
+      gsap.set(rows.children, { opacity: 1, y: 0 });
       return;
     }
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        rows.children,
-        { opacity: 0, x: -30 },
-        {
-          opacity: 1,
-          x: 0,
-          stagger: 0.15,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: { trigger: rows, start: "top 85%" },
-        }
-      );
+      gsap.set(rows.children, { opacity: 0, y: 30 });
+      gsap.to(rows.children, {
+        opacity: 1,
+        y: 0,
+        stagger: 0.1,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: { trigger: rows, start: "top 85%" },
+      });
     }, sectionRef);
 
     return () => ctx.revert();
   }, [reduced]);
 
-  // Magnetic hover effect for contact rows
-  const handleMagneticMove = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    const el = e.currentTarget;
-    const arrow = el.querySelector('.contact-arrow') as HTMLElement;
-    if (!arrow) return;
-    
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    
-    // Slight shift of arrow towards mouse
-    arrow.style.transform = `translateX(${x * 10}px) scale(1.1)`;
-  }, []);
-
-  const handleMagneticLeave = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-    const arrow = e.currentTarget.querySelector('.contact-arrow') as HTMLElement;
-    if (arrow) arrow.style.transform = "translateX(0) scale(1)";
-  }, []);
-
   return (
-    <section
-      ref={sectionRef}
-      id="contact"
-      className="relative bg-ink px-6 py-24 md:py-32"
-    >
-      {/* Subtle top gradient separator */}
-      <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-ridge to-transparent" />
+    <section ref={sectionRef} id="contact" className="px-6 py-32 border-t border-border-light bg-bg-secondary">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8">
+          
+          <div>
+            <h2 className="font-display text-4xl font-semibold leading-tight text-text-primary md:text-5xl lg:text-7xl mb-8">
+              Let&apos;s build
+              <br />
+              something real.
+            </h2>
+            <div className="space-y-2 font-mono text-[13px] text-text-secondary">
+              <p className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-text-primary animate-pulse" /> 
+                Based in Jaipur, India.
+              </p>
+              <p>Graduating 2027.</p>
+              <p className="text-text-primary">Available for ML/GenAI internships.</p>
+            </div>
 
-      <div className="mx-auto max-w-6xl">
-        <h2 className="font-display text-4xl font-extrabold leading-tight text-salt md:text-5xl">
-          Let&apos;s build
-          <br />
-          <span className="gradient-text">something real.</span>
-        </h2>
+            <div className="mt-12">
+              <a
+                href="/Moksh_Resume.pdf"
+                download="Moksh_Buddhadev_Resume.pdf"
+                className="inline-flex items-center gap-3 rounded-full border border-border-light bg-bg-primary px-8 py-4 font-mono text-sm text-text-primary transition-colors hover:bg-text-primary hover:text-bg-primary"
+              >
+                <span>Download Resume</span>
+                <span>↓</span>
+              </a>
+            </div>
+          </div>
 
-        <div ref={rowsRef} className="mt-12 gpu-layer">
-          {CONTACTS.map(({ label, href, icon }) => (
-            <a
-              key={label}
-              href={href}
-              target={href.startsWith("mailto") ? undefined : "_blank"}
-              rel={href.startsWith("mailto") ? undefined : "noopener noreferrer"}
-              onMouseMove={handleMagneticMove}
-              onMouseLeave={handleMagneticLeave}
-              className="group flex items-center justify-between border-b border-ridge py-6 transition-all duration-400 hover:border-b-accent hover:pl-4"
-            >
-              <div className="flex items-center gap-4">
-                <span className="flex h-8 w-8 items-center justify-center rounded bg-terrain font-mono text-xs text-fog transition-colors group-hover:bg-accent/10 group-hover:text-accent">
-                  {icon}
-                </span>
-                <span className="font-mono text-base text-salt transition-colors group-hover:text-accent-bright md:text-lg">
+          <div ref={rowsRef} className="flex flex-col justify-center">
+            {CONTACTS.map(({ label, value, href }) => (
+              <a
+                key={label}
+                href={href}
+                target={href.startsWith("mailto") ? undefined : "_blank"}
+                rel={href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+                className="group flex flex-col sm:flex-row sm:items-center justify-between border-b border-border-light py-8 transition-colors hover:border-text-secondary"
+              >
+                <span className="font-mono text-sm text-text-secondary mb-2 sm:mb-0">
                   {label}
                 </span>
-              </div>
-              <span className="contact-arrow font-mono text-accent transition-transform duration-300">
-                ↗
-              </span>
-            </a>
-          ))}
+                <span className="font-display text-lg sm:text-xl text-text-primary transition-transform group-hover:-translate-x-2">
+                  {value}
+                </span>
+              </a>
+            ))}
+          </div>
+          
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
-          <div className="space-y-2 font-mono text-[13px] text-fog">
-            <p className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" /> 
-              Based in Jaipur, India.
-            </p>
-            <p>Graduating 2027.</p>
-            <p className="text-salt">Available for ML/GenAI internships.</p>
-          </div>
-
-          <div className="flex justify-start md:justify-end">
-            <a
-              href="/Moksh_Resume.pdf"
-              download="Moksh_Buddhadev_Resume.pdf"
-              className="magnetic-hover group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-ridge bg-terrain px-8 py-4 font-mono text-sm text-salt transition-all duration-300 hover:border-accent hover:shadow-[0_0_20px_rgba(167,139,250,0.2)]"
-            >
-              {/* Shine effect */}
-              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
-              
-              <span className="relative z-10">Download Resume</span>
-              <span className="relative z-10 text-accent transition-transform duration-300 group-hover:translate-y-1">↓</span>
-            </a>
-          </div>
-        </div>
-
-        <footer className="mt-24 flex flex-col items-center justify-between border-t border-ridge/50 pt-8 font-mono text-[11px] text-fog md:flex-row">
+        <footer className="mt-32 flex flex-col items-center justify-between border-t border-border-light pt-8 font-mono text-[11px] text-text-secondary md:flex-row">
           <p>© {new Date().getFullYear()} Moksh Buddhadev. All rights reserved.</p>
           <div className="mt-4 flex gap-6 md:mt-0">
-            <a href="https://linkedin.com/in/mokshbuddhadev12" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">LinkedIn</a>
-            <a href="https://github.com/MokshBuddhadev" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">GitHub</a>
-            <a href="mailto:mokshbuddhadev@gmail.com" className="hover:text-accent transition-colors">Email</a>
+            {CONTACTS.map(({ label, href }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="hover:text-text-primary transition-colors">
+                {label}
+              </a>
+            ))}
           </div>
         </footer>
       </div>
