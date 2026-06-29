@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Moksh Buddhadev — AI/ML Engineer Portfolio
 
-## Getting Started
+A premium, highly interactive portfolio built for Moksh Buddhadev, an AI/ML Engineer and final-year CS student at Manipal University Jaipur. The portfolio is designed with a focus on deep aesthetics, hardware-accelerated animations, and an immersive user experience.
 
-First, run the development server:
+![Portfolio Preview](/public/og-image.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Live Demo
+**[mokshbuddhadev.vercel.app](https://mokshbuddhadev.vercel.app)** *(Replace this with your actual Vercel URL if it differs)*
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Technology Stack
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** Tailwind CSS + Vanilla CSS (for advanced micro-animations and GPU optimizations)
+- **3D Graphics:** React Three Fiber (`@react-three/fiber`, `@react-three/drei`)
+- **Animations:** GSAP (GreenSock) + Native CSS Grid Transitions
+- **Deployment:** Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Key Features
+- **Immersive 3D Hero:** Custom WebGL shaders featuring a pulsating core, counter-rotating Icosahedron wireframes, and a dynamic sine-wave particle field.
+- **Buttery Smooth Interactions:** Complex hover states handled via native CSS Grid transitions to eliminate JavaScript overhead and jitter.
+- **Interactive Skills Galaxy:** A 3D Fibonacci sphere mapping out technical skills with custom raycasting for interaction.
+- **Custom Cursor Engine:** Smooth-following glowing trail cursor built without relying on heavy GSAP tickers.
+- **Performance Optimized:** carefully constrained Device Pixel Ratios (DPR) and `will-change` hints for strict GPU offloading.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 💻 Local Development
 
-## Learn More
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/MokshBuddhadev/moksh-portfolio.git
+   cd moksh-portfolio
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **View the site:**
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deploy on Vercel
+## 📁 Project Structure
+- `/app` — Next.js routing and global layout/styles.
+- `/components/hero` — React Three Fiber 3D scene files (`FloatingOrb`, `ParticleField`, `TerrainBackground`).
+- `/components/sections` — Main content sections (`About`, `Projects`, `Skills`, `Research`, `Beyond`, `Contact`).
+- `/components/ui` — Reusable components (`ProjectCard`, `CursorTrail`, `MetricPill`).
+- `/lib` — Data files (`projects-data.ts`, `skills-data.ts`) and global configs (`gsap.ts`).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚙️ Updating Content
+- **Projects:** Edit `/lib/projects-data.ts`.
+- **Skills:** Edit `/lib/skills-data.ts`.
+- **Resume:** Replace `Moksh_Resume.pdf` in the `/public` directory.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+This project is for personal use by Moksh Buddhadev. Feel free to draw inspiration, but please do not copy the exact design or source code.
