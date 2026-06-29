@@ -25,10 +25,10 @@ export const SKILLS: { name: string; group: SkillGroup; description: string }[] 
 ];
 
 export const SKILL_COLORS: Record<SkillGroup, string> = {
-  ml: "#E8873A",
-  llm: "#38BDF8",
-  backend: "#8896AA",
-  language: "#243447",
+  ml: "#a78bfa",
+  llm: "#22d3ee",
+  backend: "#f59e0b",
+  language: "#a1a1aa",
 };
 
 export const SKILL_GROUP_LABELS: Record<SkillGroup, string> = {

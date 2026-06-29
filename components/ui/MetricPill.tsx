@@ -34,8 +34,8 @@ export function MetricPill({
         onEnter: () => {
           gsap.fromTo(
             numberEl,
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 0.6 }
+            { opacity: 0, y: 15 },
+            { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.5)" }
           );
         },
       });
@@ -56,12 +56,19 @@ export function MetricPill({
       onEnter: () => {
         gsap.to(obj, {
           val: finalVal,
-          duration: 1.2,
-          ease: "power2.out",
+          duration: 1.5, // Slower, smoother count
+          ease: "power3.out",
           onUpdate: () => {
             numberEl.textContent = `${obj.val.toFixed(decimals)}${suffix}`;
           },
         });
+        
+        // Also animate the pill itself slightly
+        gsap.fromTo(
+          pill,
+          { y: 10, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }
+        );
       },
     });
 
@@ -74,15 +81,18 @@ export function MetricPill({
   return (
     <div
       ref={pillRef}
-      className="rounded-lg border border-ridge bg-terrain px-5 py-4"
+      className="group relative overflow-hidden rounded-lg border border-ridge bg-terrain px-5 py-4 transition-all duration-300 hover:border-accent/50 hover:shadow-[0_0_15px_rgba(167,139,250,0.1)]"
     >
+      {/* Shine effect on hover */}
+      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
+      
       <span
         ref={numberRef}
-        className="font-display text-2xl font-bold text-dusk-amber md:text-3xl"
+        className="relative z-10 font-display text-2xl font-bold text-accent md:text-3xl"
       >
         {displayValue}
       </span>
-      <p className="mt-1 font-mono text-xs text-fog">{label}</p>
+      <p className="relative z-10 mt-1 font-mono text-xs text-fog group-hover:text-salt transition-colors">{label}</p>
     </div>
   );
 }

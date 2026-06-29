@@ -31,27 +31,42 @@ export function Research() {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         left,
-        { x: -40, opacity: 0 },
+        { x: -50, opacity: 0 },
         {
           x: 0,
           opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: { trigger: sectionRef.current },
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
         }
       );
       gsap.fromTo(
         right,
-        { x: 40, opacity: 0 },
+        { x: 50, opacity: 0 },
         {
           x: 0,
           opacity: 1,
-          duration: 0.8,
+          duration: 1.2,
           delay: 0.15,
-          ease: "power2.out",
-          scrollTrigger: { trigger: sectionRef.current },
+          ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
         }
       );
+      
+      // Parallax diagram
+      const diagram = left.querySelector("svg");
+      if (diagram) {
+        gsap.to(diagram, {
+          y: -20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+          }
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -64,15 +79,15 @@ export function Research() {
       className="bg-ink px-6 py-24 md:py-32"
     >
       <div className="mx-auto max-w-6xl">
-        <h2 className="mb-12 font-display text-4xl font-extrabold leading-tight text-salt md:text-5xl">
+        <h2 className="mb-12 font-display text-4xl font-extrabold leading-tight text-salt md:text-5xl animate-fade-in-up">
           Where I go
           <br />
           when I go deep.
         </h2>
 
         <div className="grid gap-12 md:grid-cols-2 md:gap-16">
-          <div ref={leftRef}>
-            <p className="font-mono text-xs uppercase tracking-wider text-dusk-amber">
+          <div ref={leftRef} className="gpu-layer">
+            <p className="font-mono text-xs uppercase tracking-wider text-accent glow-accent">
               In Progress
             </p>
             <h3 className="mt-2 font-display text-xl font-bold text-salt">
@@ -129,8 +144,9 @@ export function Research() {
                 height="40"
                 rx="8"
                 fill="var(--terrain)"
-                stroke="var(--dusk-amber)"
+                stroke="var(--accent)"
                 strokeWidth="1.5"
+                filter="drop-shadow(0 0 4px rgba(167, 139, 250, 0.4))"
               />
               <text
                 x="200"
@@ -159,13 +175,14 @@ export function Research() {
                 height="40"
                 rx="8"
                 fill="var(--terrain)"
-                stroke="var(--ridge)"
+                stroke="var(--cyan)"
+                strokeWidth="1.5"
               />
               <text
                 x="340"
                 y="45"
                 textAnchor="middle"
-                fill="var(--fog)"
+                fill="var(--cyan)"
                 fontSize="10"
                 fontFamily="monospace"
               >
@@ -187,17 +204,18 @@ export function Research() {
             </svg>
           </div>
 
-          <div ref={rightRef}>
-            <p className="font-mono text-xs uppercase tracking-wider text-dusk-amber">
+          <div ref={rightRef} className="gpu-layer">
+            <p className="font-mono text-xs uppercase tracking-wider text-cyan glow-cyan">
               Currently reading into
             </p>
             <ul className="mt-4 space-y-0">
               {INTERESTS.map((item) => (
                 <li
                   key={item}
-                  className="border-b border-ridge py-3 font-mono text-sm text-salt"
+                  className="border-b border-ridge py-3 font-mono text-sm text-salt transition-colors duration-300 hover:text-cyan hover:border-cyan/50 hover:pl-2"
+                  style={{ transitionProperty: "color, border-color, padding-left" }}
                 >
-                  → {item}
+                  <span className="text-cyan mr-2 opacity-50">→</span> {item}
                 </li>
               ))}
             </ul>

@@ -15,7 +15,7 @@ export interface FloatingOrbHandle {
   rimLight: THREE.PointLight | null;
 }
 
-// Inner Core Shader
+// Inner Core Shader — violet/cyan palette
 const coreVertexShader = `
 uniform float uTime;
 varying vec3 vNormal;
@@ -43,13 +43,19 @@ float hash(vec2 p) {
 }
 
 void main() {
-  vec3 baseColor = vec3(0.039, 0.086, 0.157); // Deep water base
+  vec3 baseColor = vec3(0.047, 0.039, 0.102); // Deep purple-black base
   vec3 viewDir = normalize(vViewPosition);
   float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 2.5);
-  vec3 rimColor = vec3(0.910, 0.529, 0.227); // Dusk amber
+  vec3 rimColor = vec3(0.655, 0.545, 0.980); // Violet accent
 
   float noise = hash(vNormal.xy + uTime * 0.1) * 0.05;
   vec3 color = baseColor + rimColor * fresnel * (0.8 + sin(uTime * 1.5) * 0.2);
+
+  // Add a subtle cyan secondary rim
+  float fresnel2 = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 4.0);
+  vec3 cyanRim = vec3(0.133, 0.827, 0.933); // Cyan
+  color += cyanRim * fresnel2 * 0.3;
+
   color += noise;
 
   gl_FragColor = vec4(color, 1.0);
@@ -124,11 +130,11 @@ export const FloatingOrb = forwardRef<FloatingOrbHandle>(
       <group>
         <ambientLight intensity={0.1} />
         <pointLight position={[-3, 4, 2]} color="#ffffff" intensity={1.2} />
-        <pointLight position={[3, 2, -2]} color="#38BDF8" intensity={0.6} />
+        <pointLight position={[3, 2, -2]} color="#22d3ee" intensity={0.6} />
         <pointLight
           ref={rimLightRef}
           position={[0, -2, 3]}
-          color="#E8873A"
+          color="#a78bfa"
           intensity={0.8}
         />
         
@@ -139,7 +145,7 @@ export const FloatingOrb = forwardRef<FloatingOrbHandle>(
           {/* Outer geometric wireframes */}
           <mesh ref={wireframeRef1} geometry={wireGeo}>
             <meshBasicMaterial 
-              color="#38BDF8" 
+              color="#22d3ee" 
               wireframe 
               transparent 
               opacity={0.15} 
@@ -148,7 +154,7 @@ export const FloatingOrb = forwardRef<FloatingOrbHandle>(
           </mesh>
           <mesh ref={wireframeRef2} geometry={wireGeo}>
             <meshBasicMaterial 
-              color="#E8873A" 
+              color="#a78bfa" 
               wireframe 
               transparent 
               opacity={0.12} 
@@ -160,7 +166,7 @@ export const FloatingOrb = forwardRef<FloatingOrbHandle>(
           <mesh scale={1.8}>
             <sphereGeometry args={[1, 32, 32]} />
             <meshBasicMaterial
-              color="#E8873A"
+              color="#a78bfa"
               transparent
               opacity={0.03}
               blending={THREE.AdditiveBlending}

@@ -11,6 +11,7 @@ import { Contact } from "@/components/sections/Contact";
 import { WaveformDivider } from "@/components/ui/WaveformDivider";
 import { CursorTrail } from "@/components/ui/CursorTrail";
 import { NoiseOverlay } from "@/components/shared/NoiseOverlay";
+import { Preloader } from "@/components/shared/Preloader";
 
 const HeroCanvas = dynamic(() => import("@/components/hero/HeroCanvas"), {
   ssr: false,
@@ -22,6 +23,7 @@ const HeroCanvas = dynamic(() => import("@/components/hero/HeroCanvas"), {
 export default function Home() {
   return (
     <>
+      <Preloader />
       <CursorTrail />
       <NoiseOverlay />
       <Navbar />

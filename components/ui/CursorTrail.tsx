@@ -29,15 +29,15 @@ export function CursorTrail() {
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
     const animate = () => {
-      // Smooth follow with different easing for dot, ring, and glow
-      dotPos.current.x = lerp(dotPos.current.x, mouse.current.x, 0.25);
-      dotPos.current.y = lerp(dotPos.current.y, mouse.current.y, 0.25);
+      // Smoother follow with graduated easing
+      dotPos.current.x = lerp(dotPos.current.x, mouse.current.x, 0.28);
+      dotPos.current.y = lerp(dotPos.current.y, mouse.current.y, 0.28);
 
-      ringPos.current.x = lerp(ringPos.current.x, mouse.current.x, 0.15);
-      ringPos.current.y = lerp(ringPos.current.y, mouse.current.y, 0.15);
+      ringPos.current.x = lerp(ringPos.current.x, mouse.current.x, 0.14);
+      ringPos.current.y = lerp(ringPos.current.y, mouse.current.y, 0.14);
 
-      glowPos.current.x = lerp(glowPos.current.x, mouse.current.x, 0.1);
-      glowPos.current.y = lerp(glowPos.current.y, mouse.current.y, 0.1);
+      glowPos.current.x = lerp(glowPos.current.x, mouse.current.x, 0.08);
+      glowPos.current.y = lerp(glowPos.current.y, mouse.current.y, 0.08);
 
       if (dotRef.current) {
         dotRef.current.style.transform = `translate(${dotPos.current.x}px, ${dotPos.current.y}px) translate(-50%, -50%)`;
@@ -55,8 +55,8 @@ export function CursorTrail() {
     const onEnterInteractive = () => {
       isHovering.current = true;
       if (ringRef.current) {
-        ringRef.current.style.borderColor = "rgba(232, 135, 58, 0.6)";
-        ringRef.current.style.backgroundColor = "rgba(232, 135, 58, 0.08)";
+        ringRef.current.style.borderColor = "rgba(167, 139, 250, 0.6)";
+        ringRef.current.style.backgroundColor = "rgba(167, 139, 250, 0.06)";
       }
       if (dotRef.current) {
         dotRef.current.style.transform = `translate(${dotPos.current.x}px, ${dotPos.current.y}px) translate(-50%, -50%) scale(0.6)`;
@@ -66,7 +66,7 @@ export function CursorTrail() {
     const onLeaveInteractive = () => {
       isHovering.current = false;
       if (ringRef.current) {
-        ringRef.current.style.borderColor = "rgba(232, 135, 58, 0.7)";
+        ringRef.current.style.borderColor = "rgba(167, 139, 250, 0.5)";
         ringRef.current.style.backgroundColor = "transparent";
       }
     };
@@ -106,11 +106,12 @@ export function CursorTrail() {
         ref={glowRef}
         className="pointer-events-none fixed left-0 top-0 z-[9997]"
         style={{
-          width: "60px",
-          height: "60px",
+          width: "80px",
+          height: "80px",
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(232,135,58,0.08) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%)",
           willChange: "transform",
+          mixBlendMode: "screen",
         }}
         aria-hidden="true"
       />
@@ -122,7 +123,7 @@ export function CursorTrail() {
           width: "36px",
           height: "36px",
           borderRadius: "50%",
-          border: "1.5px solid rgba(232, 135, 58, 0.7)",
+          border: "1.5px solid rgba(167, 139, 250, 0.5)",
           transition: "border-color 0.3s ease, background-color 0.3s ease, width 0.3s ease, height 0.3s ease",
           willChange: "transform",
         }}
@@ -136,8 +137,8 @@ export function CursorTrail() {
           width: "6px",
           height: "6px",
           borderRadius: "50%",
-          backgroundColor: "#e8873a",
-          boxShadow: "0 0 8px rgba(232, 135, 58, 0.6), 0 0 20px rgba(232, 135, 58, 0.2)",
+          backgroundColor: "#a78bfa",
+          boxShadow: "0 0 8px rgba(167, 139, 250, 0.6), 0 0 20px rgba(167, 139, 250, 0.2)",
           willChange: "transform",
           transition: "transform 0.15s ease",
         }}

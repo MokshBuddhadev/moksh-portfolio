@@ -3,14 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --ink: #0d0f14;
-  --deep-water: #0a1628;
-  --dusk-amber: #e8873a;
-  --shoreline: #38bdf8;
-  --fog: #8896aa;
-  --salt: #e8edf4;
-  --terrain: #1c2b3a;
-  --ridge: #243447;
+  --ink: #09090b;
+  --deep-water: #0c0a1a;
+  --accent: #a78bfa;
+  --accent-bright: #c4b5fd;
+  --cyan: #22d3ee;
+  --gold: #f59e0b;
+  --fog: #a1a1aa;
+  --salt: #fafafa;
+  --terrain: #18181b;
+  --ridge: #27272a;
+  --glass: rgba(9, 9, 11, 0.7);
 }
 
 * {
@@ -19,11 +22,12 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
   }
 }
 
@@ -40,6 +44,7 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* GPU acceleration helper */
@@ -70,9 +75,61 @@ body {
   display: none;
 }
 
-@keyframes wave-bar {
-  0%,
+/* ═══════════════════════════════════════
+   Preloader Animations
+   ═══════════════════════════════════════ */
+
+@keyframes stroke-draw {
+  0% {
+    stroke-dashoffset: 400;
+  }
   100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes preloader-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes preloader-bar {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes curtain-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes curtain-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* ═══════════════════════════════════════
+   Section & Card Animations
+   ═══════════════════════════════════════ */
+
+@keyframes wave-bar {
+  0%, 100% {
     transform: scaleY(0.4);
   }
   50% {
@@ -81,8 +138,7 @@ body {
 }
 
 @keyframes chevron-pulse {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.4;
     transform: translateY(0);
   }
@@ -96,14 +152,95 @@ body {
   animation: chevron-pulse 2s ease-in-out infinite;
 }
 
-/* Smooth transitions globally for less choppiness */
-section {
-  will-change: auto;
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-/* Smooth all GSAP-animated elements */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes waveform-drift {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50px);
+  }
+}
+
+/* ═══════════════════════════════════════
+   Performance & Smoothness
+   ═══════════════════════════════════════ */
+
+/* Smooth transitions globally for less choppiness */
 .project-card {
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+  transform: translateZ(0);
+}
+
+.beyond-card {
+  transform: translateZ(0);
+}
+
+/* Paint containment on heavy sections */
+section {
+  contain: layout style;
+}
+
+/* Smooth interactive elements */
+a, button {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Magnetic hover base */
+.magnetic-hover {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Glass morphism utility */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-accent {
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.15), 0 0 40px rgba(167, 139, 250, 0.05);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.15), 0 0 40px rgba(34, 211, 238, 0.05);
 }
 
 @layer utilities {

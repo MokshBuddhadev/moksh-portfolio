@@ -31,6 +31,7 @@ export default function HeroCanvas() {
   const orbRef = useRef<FloatingOrbHandle>(null);
   const particlesRef = useRef<ParticleFieldHandle>(null);
   const reduced = useReducedMotion();
+  const canvasReadyRef = useRef(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -52,63 +53,80 @@ export default function HeroCanvas() {
 
     gsap.set(container, { opacity: 0 });
 
-    const tl = gsap.timeline({ delay: 0.2 });
+    const playIntro = () => {
+      if (!canvasReadyRef.current) return;
 
-    tl.to(container, { opacity: 1, duration: 1, ease: "power2.out" });
+      const tl = gsap.timeline({ delay: 0.1 });
 
-    tl.call(
-      () => {
-        const mesh = orbRef.current?.mesh;
-        if (!mesh) return;
-        gsap.to(mesh.scale, {
-          x: 1,
-          y: 1,
-          z: 1,
-          duration: 1.8,
-          ease: "power3.out",
-        });
-        gsap.to(mesh.position, {
-          y: 0,
-          duration: 1.8,
-          ease: "power3.out",
-        });
-      },
-      undefined,
-      0.5
-    );
+      tl.to(container, { opacity: 1, duration: 1.2, ease: "power2.out" });
 
-    tl.call(
-      () => {
-        const rimLight = orbRef.current?.rimLight;
-        if (rimLight) {
-          gsap.to(rimLight, {
-            intensity: 1.5,
-            duration: 1,
-            ease: "power2.out",
+      tl.call(
+        () => {
+          const mesh = orbRef.current?.mesh;
+          if (!mesh) return;
+          gsap.to(mesh.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 2,
+            ease: "power3.out",
           });
-        }
-      },
-      undefined,
-      1.2
-    );
-
-    tl.call(
-      () => {
-        const points = particlesRef.current?.getPoints();
-        if (points) {
-          gsap.to(points.material, {
-            opacity: 0.5,
-            duration: 1.2,
-            ease: "power1.out",
+          gsap.to(mesh.position, {
+            y: 0,
+            duration: 2,
+            ease: "power3.out",
           });
-        }
-      },
-      undefined,
-      2.4
-    );
+        },
+        undefined,
+        0.3
+      );
+
+      tl.call(
+        () => {
+          const rimLight = orbRef.current?.rimLight;
+          if (rimLight) {
+            gsap.to(rimLight, {
+              intensity: 1.5,
+              duration: 1.2,
+              ease: "power2.out",
+            });
+          }
+        },
+        undefined,
+        1.0
+      );
+
+      tl.call(
+        () => {
+          const points = particlesRef.current?.getPoints();
+          if (points) {
+            gsap.to(points.material, {
+              opacity: 0.5,
+              duration: 1.5,
+              ease: "power1.out",
+            });
+          }
+        },
+        undefined,
+        1.8
+      );
+    };
+
+    // Wait for preloader to complete before animating
+    const onPreloaderComplete = () => {
+      playIntro();
+    };
+
+    const onCanvasReady = () => {
+      canvasReadyRef.current = true;
+    };
+
+    window.addEventListener("preloader-complete", onPreloaderComplete, { once: true });
+    window.addEventListener("canvas-ready", onCanvasReady, { once: true });
 
     return () => {
-      tl.kill();
+      window.removeEventListener("preloader-complete", onPreloaderComplete);
+      window.removeEventListener("canvas-ready", onCanvasReady);
     };
   }, [reduced]);
 
@@ -123,8 +141,8 @@ export default function HeroCanvas() {
         gl={{ antialias: true, powerPreference: "high-performance" }}
         performance={{ min: 0.5 }}
         onCreated={() => {
-          // Add a tiny delay to ensure first frame is painted
           setTimeout(() => {
+            canvasReadyRef.current = true;
             window.dispatchEvent(new Event("canvas-ready"));
           }, 100);
         }}

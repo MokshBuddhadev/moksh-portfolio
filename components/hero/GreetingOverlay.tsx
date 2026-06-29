@@ -51,16 +51,13 @@ export function GreetingOverlay({ onIntroComplete }: GreetingOverlayProps) {
       return;
     }
 
-    document.body.style.overflow = "hidden";
-
-    gsap.set(words, { opacity: 0, y: 16 });
-    gsap.set([subtitle, cta], { opacity: 0, y: 10 });
+    gsap.set(words, { opacity: 0, y: 24 });
+    gsap.set([subtitle, cta], { opacity: 0, y: 14 });
     if (chevron) gsap.set(chevron, { opacity: 0 });
 
     const playAnimation = () => {
       const tl = gsap.timeline({
         onComplete: () => {
-          document.body.style.overflow = "";
           onIntroComplete?.();
         },
       });
@@ -68,34 +65,34 @@ export function GreetingOverlay({ onIntroComplete }: GreetingOverlayProps) {
       tl.to(words, {
         opacity: 1,
         y: 0,
-        stagger: 0.06,
-        duration: 0.45,
+        stagger: 0.07,
+        duration: 0.6,
         ease: "power3.out",
-      }, 0.5); // Start slightly after canvas fades in
+      }, 0.3);
 
-      tl.to(subtitle, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 1.8);
+      tl.to(subtitle, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.5);
       tl.to(cta.children, {
         opacity: 1,
         y: 0,
-        stagger: 0.08,
-        duration: 0.45,
+        stagger: 0.1,
+        duration: 0.5,
         ease: "power2.out",
-      }, 1.9);
+      }, 1.7);
 
       if (chevron) {
-        tl.to(chevron, { opacity: 1, duration: 0.5, ease: "power2.out" }, 2.6);
+        tl.to(chevron, { opacity: 1, duration: 0.6, ease: "power2.out" }, 2.4);
       }
 
       tl.call(() => {
         window.dispatchEvent(new Event("hero-navbar-show"));
-      }, undefined, 2.3);
+      }, undefined, 2.0);
     };
 
-    window.addEventListener("canvas-ready", playAnimation, { once: true });
+    // Wait for preloader-complete instead of canvas-ready
+    window.addEventListener("preloader-complete", playAnimation, { once: true });
 
     return () => {
-      window.removeEventListener("canvas-ready", playAnimation);
-      document.body.style.overflow = "";
+      window.removeEventListener("preloader-complete", playAnimation);
     };
   }, [reduced, onIntroComplete]);
 
@@ -105,7 +102,7 @@ export function GreetingOverlay({ onIntroComplete }: GreetingOverlayProps) {
         <span
           key={`${text}-${i}`}
           className={`greeting-word mr-[0.3em] inline-block ${
-            accent ? "text-dusk-amber" : ""
+            accent ? "gradient-text" : ""
           }`}
         >
           {text}
@@ -120,7 +117,7 @@ export function GreetingOverlay({ onIntroComplete }: GreetingOverlayProps) {
       className="pointer-events-none absolute inset-0 z-10 flex items-end px-6 pb-20 md:px-10 md:pb-28 lg:px-16"
     >
       <div className="w-full max-w-xl lg:max-w-lg">
-        <h1 className="font-display text-[2rem] font-extrabold leading-[1.15] text-salt sm:text-4xl md:text-[2.5rem] lg:text-5xl">
+        <h1 className="font-display text-[2rem] font-bold leading-[1.15] text-salt sm:text-4xl md:text-[2.5rem] lg:text-5xl">
           {renderLine(LINE_ONE, "l1")}
           {renderLine(LINE_TWO, "l2")}
           {renderLine(LINE_THREE, "l3")}
@@ -134,14 +131,17 @@ export function GreetingOverlay({ onIntroComplete }: GreetingOverlayProps) {
         <div ref={ctaRef} className="mt-5 flex flex-wrap gap-3 opacity-0">
           <a
             href="#projects"
-            className="pointer-events-auto inline-block rounded-lg bg-dusk-amber px-5 py-2.5 font-mono text-xs font-medium text-ink transition-transform hover:scale-[1.02] sm:text-sm"
+            className="pointer-events-auto inline-block rounded-lg px-5 py-2.5 font-mono text-xs font-medium text-ink transition-all duration-300 hover:scale-[1.03] hover:shadow-lg sm:text-sm"
+            style={{
+              background: "linear-gradient(135deg, var(--accent), var(--cyan))",
+            }}
           >
             See my work ↓
           </a>
           <a
             href="/Moksh_Resume.pdf"
             download="Moksh_Buddhadev_Resume.pdf"
-            className="pointer-events-auto inline-block rounded-lg border border-ridge bg-terrain/80 px-5 py-2.5 font-mono text-xs text-salt backdrop-blur-sm transition-colors hover:border-shoreline sm:text-sm"
+            className="pointer-events-auto inline-block rounded-lg border border-ridge bg-terrain/80 px-5 py-2.5 font-mono text-xs text-salt backdrop-blur-sm transition-all duration-300 hover:border-accent hover:bg-accent/5 sm:text-sm"
           >
             Download resume ↓
           </a>
@@ -156,7 +156,7 @@ export function GreetingOverlay({ onIntroComplete }: GreetingOverlayProps) {
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path
             d="M6 9l6 6 6-6"
-            stroke="var(--shoreline)"
+            stroke="var(--cyan)"
             strokeWidth="2"
             strokeLinecap="round"
           />

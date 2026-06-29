@@ -47,9 +47,9 @@ export function TerrainBackground() {
     const mat = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
-        uOceanColor: { value: new THREE.Color("#0A1628") },
-        uMountainColor: { value: new THREE.Color("#1C2B3A") },
-        uPeakColor: { value: new THREE.Color("#243447") },
+        uOceanColor: { value: new THREE.Color("#0c0a1a") },
+        uMountainColor: { value: new THREE.Color("#18181b") },
+        uPeakColor: { value: new THREE.Color("#1e1b2e") },
       },
       vertexShader,
       fragmentShader,

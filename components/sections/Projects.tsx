@@ -24,30 +24,49 @@ export function Projects() {
     }
 
     const ctx = gsap.context(() => {
+      // Parallax heading
       gsap.fromTo(
         header,
-        { opacity: 0, y: 20 },
+        { opacity: 0, y: 40 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
+          duration: 1,
           ease: "power3.out",
-          scrollTrigger: { trigger: section },
+          scrollTrigger: { 
+            trigger: section,
+            start: "top 80%",
+          },
         }
       );
 
-      gsap.fromTo(
-        track.children,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          stagger: 0.15,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: { trigger: track, start: "top 85%" },
+      gsap.to(header, {
+        y: -40,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 0.5,
         }
-      );
+      });
+
+      // Staggered card reveal using ScrollTrigger batch for better performance
+      gsap.set(track.children, { opacity: 0, y: 60 });
+      
+      ScrollTrigger.batch(track.children, {
+        start: "top 85%",
+        onEnter: (elements) => {
+          gsap.to(elements, {
+            opacity: 1,
+            y: 0,
+            stagger: 0.15,
+            duration: 1.2,
+            ease: "power3.out",
+            overwrite: true
+          });
+        },
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -60,7 +79,7 @@ export function Projects() {
       className="bg-ink px-6 py-24 md:py-32"
     >
       <div className="mx-auto max-w-6xl">
-        <div ref={headerRef}>
+        <div ref={headerRef} className="gpu-layer">
           <h2 className="font-display text-4xl font-extrabold leading-tight text-salt md:text-5xl">
             Selected
             <br />
@@ -69,8 +88,7 @@ export function Projects() {
         </div>
         <div
           ref={trackRef}
-          className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-3 md:gap-8"
-          style={{ willChange: "transform" }}
+          className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-3 md:gap-8 gpu-layer"
         >
           {PROJECTS.map((project) => (
             <ProjectCard key={project.index} {...project} />

@@ -37,7 +37,7 @@ export const ParticleField = forwardRef<ParticleFieldHandle>(
       geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
       const mat = new THREE.PointsMaterial({
-        color: "#38BDF8",
+        color: "#a78bfa",
         size: 0.025,
         transparent: true,
         opacity: 0,

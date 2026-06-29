@@ -7,8 +7,12 @@ export function ScrollProgress() {
 
   return (
     <div
-      className="absolute left-0 top-0 h-px bg-dusk-amber transition-[width] duration-75"
-      style={{ width: `${progress * 100}%` }}
+      className="absolute -bottom-px left-0 h-[2px] rounded-full transition-[width] duration-75"
+      style={{
+        width: `${progress * 100}%`,
+        background: "linear-gradient(90deg, var(--accent), var(--cyan))",
+        boxShadow: progress > 0 ? "0 0 8px rgba(167, 139, 250, 0.4)" : "none",
+      }}
       aria-hidden="true"
     />
   );

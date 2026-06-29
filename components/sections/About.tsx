@@ -22,28 +22,50 @@ export function About() {
     }
 
     const ctx = gsap.context(() => {
+      // Smoother slide-in with slight rotation and longer duration
       gsap.fromTo(
         left,
-        { x: -40, opacity: 0 },
+        { x: -50, opacity: 0, rotation: -2 },
         {
           x: 0,
           opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: { trigger: sectionRef.current },
+          rotation: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: { 
+            trigger: sectionRef.current,
+            start: "top 75%",
+          },
         }
       );
       gsap.fromTo(
         right,
-        { x: 40, opacity: 0 },
+        { x: 50, opacity: 0, y: 30 },
         {
           x: 0,
+          y: 0,
           opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: { trigger: sectionRef.current },
+          duration: 1.2,
+          delay: 0.1,
+          ease: "power3.out",
+          scrollTrigger: { 
+            trigger: sectionRef.current,
+            start: "top 75%",
+          },
         }
       );
+
+      // Subtle parallax effect on the heading
+      gsap.to(left.querySelector("h2"), {
+        y: -30,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 0.5,
+        }
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -56,14 +78,14 @@ export function About() {
       className="bg-deep-water px-6 py-24 md:py-32"
     >
       <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[3fr_2fr] md:gap-16">
-        <div ref={leftRef}>
+        <div ref={leftRef} className="gpu-layer">
           <h2 className="font-display text-4xl font-extrabold leading-tight text-salt md:text-5xl lg:text-6xl">
             Building AI that
             <br />
             earns its keep.
           </h2>
         </div>
-        <div ref={rightRef}>
+        <div ref={rightRef} className="gpu-layer">
           <p className="font-body text-base leading-[1.7] text-fog">
             I&apos;m a final-year CS student at Manipal University Jaipur
             obsessed with the mechanics of how language models actually work —

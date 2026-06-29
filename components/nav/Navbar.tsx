@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "@/lib/gsap";
 import { ScrollProgress } from "@/components/shared/ScrollProgress";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -19,7 +19,26 @@ export function Navbar() {
   const navRef = useRef<HTMLElement>(null);
   const [activeSection, setActiveSection] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const reduced = useReducedMotion();
+  const lastScrollY = useRef(0);
+
+  // Scroll direction detection for hide/show
+  useEffect(() => {
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      const threshold = 100;
+      if (currentY > threshold && currentY > lastScrollY.current + 10) {
+        setHidden(true);
+      } else if (currentY < lastScrollY.current - 10 || currentY < threshold) {
+        setHidden(false);
+      }
+      lastScrollY.current = currentY;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const nav = navRef.current;
@@ -33,7 +52,7 @@ export function Navbar() {
 
     const onIntro = () => {
       if (reduced) return;
-      gsap.to(nav, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" });
+      gsap.to(nav, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" });
     };
 
     window.addEventListener("hero-navbar-show", onIntro);
@@ -57,14 +76,27 @@ export function Navbar() {
     };
   }, [reduced]);
 
+  // Magnetic hover effect
+  const handleMagneticMove = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    el.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+  }, []);
+
+  const handleMagneticLeave = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.currentTarget.style.transform = "translate(0, 0)";
+  }, []);
+
   useEffect(() => {
     if (!menuOpen || reduced) return;
 
     const links = document.querySelectorAll(".mobile-nav-link");
     gsap.fromTo(
       links,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, stagger: 0.08, duration: 0.4, ease: "power2.out" }
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, stagger: 0.08, duration: 0.5, ease: "power3.out" }
     );
   }, [menuOpen, reduced]);
 
@@ -72,23 +104,39 @@ export function Navbar() {
     <>
       <nav
         ref={navRef}
-        className="fixed left-0 right-0 top-0 z-50 border-b border-ridge"
+        className="fixed left-1/2 top-4 z-50 -translate-x-1/2"
         style={{
-          background: "rgba(13, 15, 20, 0.75)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
+          transform: `translateX(-50%) translateY(${hidden ? "-120%" : "0"})`,
+          transition: "transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
         }}
       >
-        <ScrollProgress />
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div
+          className="flex items-center gap-1 rounded-full border border-ridge/50 px-2 py-1.5 md:px-3"
+          style={{
+            background: "rgba(9, 9, 11, 0.6)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.03)",
+          }}
+        >
+          <ScrollProgress />
+
+          {/* Logo */}
           <a
             href="#"
-            className="font-display text-lg font-bold text-dusk-amber"
+            className="mr-2 rounded-full px-3 py-1.5 font-display text-base font-bold transition-all duration-300"
+            style={{
+              background: "linear-gradient(135deg, var(--accent), var(--cyan))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
           >
             MB
           </a>
 
-          <div className="hidden items-center gap-6 md:flex">
+          {/* Desktop links */}
+          <div className="hidden items-center gap-0.5 md:flex">
             {NAV_LINKS.map(({ label, href }) => {
               const sectionId = href.replace("#", "");
               const isActive = activeSection === sectionId;
@@ -96,13 +144,20 @@ export function Navbar() {
                 <a
                   key={href}
                   href={href}
-                  className={`relative font-mono text-[13px] transition-colors duration-300 ${
-                    isActive ? "text-dusk-amber" : "text-fog hover:text-salt"
-                  }`}
+                  className="magnetic-hover relative rounded-full px-3.5 py-1.5 font-mono text-[12px] tracking-wide transition-all duration-300"
+                  style={{
+                    color: isActive ? "var(--accent-bright)" : "var(--fog)",
+                    background: isActive ? "rgba(167, 139, 250, 0.1)" : "transparent",
+                  }}
+                  onMouseMove={handleMagneticMove}
+                  onMouseLeave={handleMagneticLeave}
                 >
                   {label}
                   {isActive && (
-                    <span className="absolute -bottom-1 left-0 h-0.5 w-full bg-dusk-amber" />
+                    <span
+                      className="absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full"
+                      style={{ background: "var(--accent)" }}
+                    />
                   )}
                 </a>
               );
@@ -110,35 +165,57 @@ export function Navbar() {
             <a
               href="/Moksh_Resume.pdf"
               download="Moksh_Buddhadev_Resume.pdf"
-              className="rounded border border-ridge px-3 py-1 font-mono text-[11px] text-shoreline transition-all duration-300 hover:border-shoreline hover:bg-shoreline/5"
+              className="ml-2 rounded-full border px-3.5 py-1.5 font-mono text-[11px] transition-all duration-300"
+              style={{
+                borderColor: "rgba(167, 139, 250, 0.3)",
+                color: "var(--accent)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--accent)";
+                e.currentTarget.style.background = "rgba(167, 139, 250, 0.08)";
+                e.currentTarget.style.boxShadow = "0 0 15px rgba(167, 139, 250, 0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(167, 139, 250, 0.3)";
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               Resume ↓
             </a>
           </div>
 
+          {/* Mobile hamburger */}
           <button
             type="button"
-            className="flex flex-col gap-1.5 md:hidden"
+            className="flex flex-col gap-1 rounded-full p-2 md:hidden"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
           >
-            <span className="block h-0.5 w-6 bg-salt" />
-            <span className="block h-0.5 w-6 bg-salt" />
-            <span className="block h-0.5 w-6 bg-salt" />
+            <span className="block h-[1.5px] w-5 rounded-full bg-salt transition-all" />
+            <span className="block h-[1.5px] w-5 rounded-full bg-salt transition-all" />
+            <span className="block h-[1.5px] w-3.5 rounded-full bg-salt transition-all" />
           </button>
         </div>
       </nav>
 
+      {/* Mobile menu overlay */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-ink"
-          style={{ backdropFilter: "blur(12px)" }}
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center"
+          style={{
+            background: "rgba(9, 9, 11, 0.95)",
+            backdropFilter: "blur(24px)",
+          }}
         >
           <button
             type="button"
-            className="absolute right-6 top-6 font-display text-3xl text-salt"
+            className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center rounded-full border border-ridge text-2xl text-salt transition-all duration-300 hover:border-accent hover:text-accent"
             onClick={() => setMenuOpen(false)}
             aria-label="Close menu"
+            style={{ transform: "rotate(0deg)", transition: "transform 0.3s ease" }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "rotate(90deg)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "rotate(0deg)"; }}
           >
             ×
           </button>
@@ -147,7 +224,7 @@ export function Navbar() {
               <a
                 key={href}
                 href={href}
-                className="mobile-nav-link font-display text-3xl font-bold text-salt"
+                className="mobile-nav-link font-display text-3xl font-bold text-salt transition-colors duration-300 hover:text-accent"
                 onClick={() => setMenuOpen(false)}
               >
                 {label}
@@ -156,7 +233,8 @@ export function Navbar() {
             <a
               href="/Moksh_Resume.pdf"
               download="Moksh_Buddhadev_Resume.pdf"
-              className="mobile-nav-link font-display text-2xl font-bold text-shoreline"
+              className="mobile-nav-link font-display text-2xl font-bold transition-colors duration-300"
+              style={{ color: "var(--cyan)" }}
               onClick={() => setMenuOpen(false)}
             >
               Resume ↓
